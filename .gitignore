@@ -1,0 +1,19 @@
+# Raw source data — large files, excluded by default.
+# Remove this line (or use Git LFS: `git lfs track "data/raw/*.csv"`) if you want to commit raw data too.
+data/raw/*.csv
+
+# Tableau
+*.twbx
+*.hyper
+*.tde
+*.tableau-cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
