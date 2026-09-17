@@ -22,7 +22,6 @@ ecommerce-tableau-portfolio/
     └── data_dictionary.md        <- column-level documentation of every processed table
 ```
 
-> **Note on raw data in `data/raw/`:** the largest raw file is ~48MB. If you're publishing this repo publicly, consider Git LFS (`git lfs track "*.csv"`) or keeping only `data/processed/` in git and adding `data/raw/` to `.gitignore` — a `.gitignore` is included that does the latter by default (see [Setting this up on GitHub](#6-setting-this-up-on-github)).
 
 ---
 
@@ -48,11 +47,6 @@ ecommerce-tableau-portfolio/
 4. **Builds a true product-level fact table** by joining `order_items` → `product_catalog` → `orders`, since the main file is order-grain and cannot answer "which *product*" questions on its own.
 5. **Writes 13 pre-aggregated marts** to `data/processed/` so Tableau extracts stay fast and every dashboard has a purpose-built table instead of hitting the 138K-row fact table with live calculations for every view.
 
-Re-run it with:
-```bash
-cd notebooks
-python 01_data_pipeline.py
-```
 
 ### A data-quality caveat worth stating out loud (and I did, in the code)
 `delivery_days`, `estimated_delivery_days`, `customer_rating`, and `delivery_status` are only populated for **Completed** orders — Cancelled, Pending, and Returned orders never reach delivery or get rated. That means "does delivery time predict returns?" **cannot be answered directly from this dataset** (the two fields never co-occur on returned rows). I scoped the delivery/rating analysis to completed orders only and documented this rather than silently joining across a gap. This kind of caveat is exactly what "inspect before analyzing" in the dataset's own usage notes is asking for.
@@ -111,25 +105,8 @@ Data source for each dashboard = one of the pre-built marts in `data/processed/`
 
 ---
 
-## 6. Setting this up on GitHub
 
-```bash
-cd ecommerce-tableau-portfolio
-git init
-git add .
-git commit -m "Initial commit: e-commerce analytics pipeline + Tableau dashboard spec"
-git branch -M main
-git remote add origin https://github.com/<your-username>/ecommerce-tableau-portfolio.git
-git push -u origin main
-```
 
-A `.gitignore` is included that excludes `data/raw/` (large source files) and Tableau's local cache/lock files — un-comment the relevant line if you'd rather commit the raw data too (e.g. via Git LFS).
-
-**Suggested repo description / About text:**
-> End-to-end e-commerce analytics project: Python data pipeline (cleaning, feature engineering, RFM segmentation) feeding a 6-dashboard Tableau workbook, on 138K+ transactions (2021–2025). Includes documented data-quality findings, not just charts.
-
----
-
-## 7. Tools used
+## Tools used
 
 Python (pandas, numpy) for the pipeline · Tableau for visualization · designed to also work in Power BI or a SQL warehouse with minimal changes, since every mart is a plain flat table.
